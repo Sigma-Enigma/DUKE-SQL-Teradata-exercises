@@ -1,3 +1,5 @@
+W5
+
 2.Question 2
 How many distinct skus have the brand “Polo fas”, and are either size “XXL” or “black” in color?
 
@@ -67,7 +69,6 @@ GROUP BY trnsact.sku
 
 ORDER BY percnt_incr;
 
-***ANSWER***
 
 SELECT subq1.sku, 
 	SUM( CASE WHEN subq_month = 11 THEN amt ELSE 0 END) AS nov_amt_sum, 
@@ -117,8 +118,6 @@ ORDER BY subq1.std_dev DESC
 
 7.Question 7
 What is the city and state of the store which had the greatest increase in average daily revenue (as defined in Teradata Week 5 Exercise Guide) from November to December?
-
-NOTE: THIS PROBLEM IS NOT LINING UP WITH ANSWERS!! (investigate later) Check out CASE and || for string concatenation 
 
 SELECT subq1.store,
  subq1.city,
@@ -186,39 +185,6 @@ For each store, determine the month with the minimum average daily revenue (as d
 15.Question 15
 Write a query that determines the month in which each store had its maximum number of sku units returned. During which month did the greatest number of stores have their maximum number of sku units returned?
 
-
-
-****************** scratchpad *********************
-
-
-18,907,355 rows start store 3107, temple, tx 36
-
-
-*try to include filter for missing data (missing days) ?? Using WHERE or HAVING in subquery
-
-SELECT subq1.store, subq1.city, subq1.state, COUNT(CASE WHEN trans_month = 11 THEN subq1.store_saledate END)
-FROM (SELECT trnsact.store, strinfo.city, strinfo.state, trnsact.store || '-' || trnsact.saledate AS store_saledate, EXTRACT(YEAR FROM trnsact.saledate) AS trans_year, EXTRACT(MONTH FROM trnsact.saledate) AS trans_month, EXTRACT(DAY FROM trnsact.saledate) AS trans_day, amt
-	FROM ua_dillards.trnsact
-	LEFT JOIN ua_dillards.strinfo
-	ON trnsact.store=strinfo.store
-	WHERE (trans_month = 11 OR trans_month = 12) AND stype = 'P' 
-	) AS subq1
-
-GROUP BY subq1.store, subq1.city, subq1.state
-
-ORDER BY percent_change desc;
-
-
-SELECT subq1.store, subq1.city, subq1.state, COUNT(DISTINCT subq1.store_year_month_day)
-FROM (SELECT trnsact.store, strinfo.city, strinfo.state, trnsact.store || '--' || trnsact.saledate AS store_year_month_day, EXTRACT(MONTH FROM trnsact.saledate) AS trans_month, EXTRACT(DAY FROM trnsact.saledate) AS trans_day, trnsact.saledate, amt
-	FROM ua_dillards.trnsact
-	LEFT JOIN ua_dillards.strinfo
-	ON trnsact.store=strinfo.store
-	WHERE (trans_month = 11 OR trans_month = 12) AND stype = 'P' 
-	) AS subq1
-WHERE EXTRACT( MONTH FROM subq1.saledate) = 11
-GROUP BY subq1.store, subq1.city, subq1.state
-ORDER BY COUNT(DISTINCT subq1.store_year_month_day) asc;
 
 
 
